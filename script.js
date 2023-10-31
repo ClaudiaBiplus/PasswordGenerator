@@ -90,17 +90,73 @@ var upperCasedCharacters = [
 
 // Function to prompt user for password options
 function getPasswordOptions() {
+  // Prompt for password length
+  var passwordLength = parseInt(prompt('Enter the password length (8-128 characters):'));
 
+  // Validate password length
+  if (isNaN(passwordLength) || passwordLength < 8 || passwordLength > 128) {
+    alert('Please enter a valid password length between 8 and 128 characters.');
+    return;
+  }
+
+  // Confirm the use of character types
+  var useLowercase = confirm('Include lowercase characters?');
+  var useUppercase = confirm('Include uppercase characters?');
+  var useNumeric = confirm('Include numeric characters?');
+  var useSpecial = confirm('Include special characters?');
+
+  // Check that at least one character type is selected
+  if (!useLowercase && !useUppercase && !useNumeric && !useSpecial) {
+    alert('Please select at least one character type.');
+    return;
+  }
+
+  return {
+    passwordLength: passwordLength,
+    useLowercase: useLowercase,
+    useUppercase: useUppercase,
+    useNumeric: useNumeric,
+    useSpecial: useSpecial,
+  };
 }
 
 // Function for getting a random element from an array
 function getRandom(arr) {
-
+  var randomIndex = Math.floor(Math.random() * arr.length);
+  return arr[randomIndex];
 }
 
 // Function to generate password with user input
 function generatePassword() {
+  var options = getPasswordOptions();
+  if (!options) {
+    return; // Exit if no valid options
+  }
 
+  var password = '';
+  var availableCharacters = [];
+
+  if (options.useLowercase) {
+    availableCharacters = availableCharacters.concat(lowerCasedCharacters);
+  }
+
+  if (options.useUppercase) {
+    availableCharacters = availableCharacters.concat(upperCasedCharacters);
+  }
+
+  if (options.useNumeric) {
+    availableCharacters = availableCharacters.concat(numericCharacters);
+  }
+
+  if (options.useSpecial) {
+    availableCharacters = availableCharacters.concat(specialCharacters);
+  }
+
+  for (var i = 0; i < options.passwordLength; i++) {
+    password += getRandom(availableCharacters);
+  }
+
+  return password;
 }
 
 // Get references to the #generate element
